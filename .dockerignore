@@ -1,0 +1,9 @@
+# ignore all files
+**
+
+# exclusion
+!/src/
+
+!/manage.py
+!/pyproject.toml
+!/uv.lock

@@ -1,0 +1,30 @@
+name: utility-book
+
+services:
+  pg:
+    image: postgres:18.1-alpine3.23
+    container_name: pg
+    env_file:
+      - ../.env
+    command:
+      - postgres
+      - -c
+      - timezone=${TZ:-UTC}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    ports:
+      - "${POSTGRES_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  pg-data:
+    name: pg-data
+
+networks:
+  default:
+    name: utility-book-network

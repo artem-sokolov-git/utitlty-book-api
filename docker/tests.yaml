@@ -1,0 +1,30 @@
+name: utility-book
+
+services:
+  pg-test:
+    image: postgres:18.1-alpine3.23
+    container_name: pg-test
+    logging:
+      driver: "none"
+    environment:
+      POSTGRES_DB: test
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+    ports:
+      - "5433:5432"
+    tmpfs:
+      - /var/lib/postgresql
+    command:
+      - postgres
+      - -c
+      - fsync=off
+      - -c
+      - synchronous_commit=off
+      - -c
+      - full_page_writes=off
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test -d test"]
+      interval: 1s
+      timeout: 1s
+      retries: 10
+    restart: unless-stopped

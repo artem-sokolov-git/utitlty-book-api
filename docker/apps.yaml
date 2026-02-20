@@ -1,0 +1,21 @@
+name: utility-book
+
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: Dockerfile.dev
+    container_name: web
+    env_file:
+      - ../.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      pg:
+        condition: service_healthy
+    restart: unless-stopped
+
+
+networks:
+  default:
+    name: utility-book-network
