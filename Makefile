@@ -9,9 +9,10 @@ RESET=\033[0m
 COMPOSE_FILES=--env-file .env -f docker/storages.yaml -f docker/apps.yaml
 WEB_EXEC=docker compose $(COMPOSE_FILES) exec -it web
 
+# DOCKER
 run: ## Start container in detached mode (rebuild image)
 	@echo "$(CYAN)>>> Starting containers...$(RESET)"
-	@docker compose $(COMPOSE_FILES) up pg web --build
+	@docker compose $(COMPOSE_FILES) up -d pg web --build
 
 down: ## Stop and remove container
 	@echo "$(YELLOW)>>> Stopping containers...$(RESET)"
@@ -26,6 +27,7 @@ clear: ## Stop container and remove all volumes
 logs: ## Show container logs
 	@docker compose $(COMPOSE_FILES) logs -f
 
+# CHECKS
 check: ## Pre-commit check
 	@git add .
 	@uv run pre-commit run --all-files
@@ -42,12 +44,27 @@ full-check: ## Make full-check with tests
 	@$(MAKE) tests
 
 ## DJANGO COMMANDS
+migrations: ## Make database migrations
+	@uv run python -W ignore::RuntimeWarning manage.py makemigrations
 
 migrate: ## Apply database migrations
 	@$(WEB_EXEC) python manage.py migrate
 
 superuser: ## Create superuser
 	@$(WEB_EXEC) python manage.py createsuperuser
+
+## POSTGRES
+import-sql: ## Import SQL file into pg (usage: make import-sql file=gas_insert.sql)
+	@docker exec -i pg sh -c 'psql -U $$POSTGRES_USER -d $$POSTGRES_DB' < data/$(file)
+	@echo "$(GREEN)[✓] Done$(RESET)"
+
+## DEVELOPMENT
+rebuild: ## Dev rebuild project
+	@$(MAKE) clear
+	@$(MAKE) migrations
+	@$(MAKE) run
+	@$(MAKE) migrate
+	@$(MAKE) superuser
 
 .DEFAULT_GOAL := help
 
