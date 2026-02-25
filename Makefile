@@ -28,9 +28,9 @@ logs: ## Show container logs
 	@docker compose $(COMPOSE_FILES) logs -f
 
 # CHECKS
-check: ## Pre-commit check
-	@git add .
-	@uv run pre-commit run --all-files
+check: ## Ruff lint and format check
+	@uv run ruff check .
+	@uv run ruff format --check .
 
 tests: ## Run tests (spins up test database)
 	@echo "$(CYAN)>>> Running tests...$(RESET)"
@@ -38,10 +38,6 @@ tests: ## Run tests (spins up test database)
 	@uv run pytest
 	@docker compose -f docker/tests.yaml down
 	@echo "$(GREEN)[✓] Tests passed$(RESET)"
-
-full-check: ## Make full-check with tests
-	@$(MAKE) check
-	@$(MAKE) tests
 
 ## DJANGO COMMANDS
 migrations: ## Make database migrations
@@ -52,6 +48,9 @@ migrate: ## Apply database migrations
 
 superuser: ## Create superuser
 	@$(WEB_EXEC) python manage.py createsuperuser
+
+shell: ## Create superuser
+	@$(WEB_EXEC) python manage.py shell
 
 ## POSTGRES
 import-sql: ## Import SQL file into pg (usage: make import-sql file=gas_insert.sql)

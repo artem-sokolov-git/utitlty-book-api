@@ -1,4 +1,4 @@
-name: utility-book
+name: utility-book-test
 
 services:
   pg-test:
