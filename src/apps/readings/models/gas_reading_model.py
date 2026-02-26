@@ -2,12 +2,12 @@ from django.db import models
 from django.utils.formats import date_format
 
 from src.apps.readings.models.base_reading_model import BaseReadingModel
-from src.apps.readings.querysets import DeclaredGasReadingQuerySet
-
-DeclaredManager = models.Manager.from_queryset(DeclaredGasReadingQuerySet)
+from src.apps.readings.querysets import GasReadingQuerySet
 
 
 class GasReading(BaseReadingModel):
+    objects = GasReadingQuerySet.as_manager()
+
     reading_value = models.PositiveIntegerField(
         verbose_name="Показание (Р)",
         help_text="Реальное показание счетчика (отличается от декларируемого)",
@@ -24,10 +24,6 @@ class GasReading(BaseReadingModel):
         max_digits=10,
         decimal_places=2,
     )
-
-    # Managers
-    objects = models.Manager()
-    declared = DeclaredManager()
 
     def __str__(self):
         month = date_format(self.reading_date, "F Y")

@@ -77,4 +77,4 @@ class GasReadingAdmin(admin.ModelAdmin):
         return initial
 
     def get_queryset(self, request):
-        return GasReading.declared.with_readings().with_diff().with_costs()
+        return GasReading.objects.with_readings().with_diff().with_costs()

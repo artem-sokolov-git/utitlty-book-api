@@ -1,3 +1,7 @@
-from .gas_reading_queryset import DeclaredGasReadingQuerySet
+from .base_reading_queryset import BaseReadingQuerySet
+from .gas_reading_queryset import GasReadingQuerySet
 
-__all__ = ("DeclaredGasReadingQuerySet",)
+__all__ = (
+    "BaseReadingQuerySet",
+    "GasReadingQuerySet",
+)
