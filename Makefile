@@ -53,8 +53,8 @@ shell: ## Create superuser
 	@$(WEB_EXEC) python manage.py shell
 
 ## POSTGRES
-import-sql: ## Import SQL file into pg (usage: make import-sql file=gas_insert.sql)
-	@docker exec -i pg sh -c 'psql -U $$POSTGRES_USER -d $$POSTGRES_DB' < data/$(file)
+import-sql: ## Import SQL file into pg (usage: make import-sql file=data/gas_insert.sql)
+	@docker exec -i pg sh -c 'psql -U $$POSTGRES_USER -d $$POSTGRES_DB' < $(file)
 	@echo "$(GREEN)[✓] Done$(RESET)"
 
 ## DEVELOPMENT
@@ -64,6 +64,8 @@ rebuild: ## Dev rebuild project
 	@$(MAKE) run
 	@$(MAKE) migrate
 	@$(MAKE) superuser
+	@$(MAKE) import-sql file="data/gas_insert.sql"
+	@$(MAKE) import-sql file="data/elect_insert.sql"
 
 .DEFAULT_GOAL := help
 
