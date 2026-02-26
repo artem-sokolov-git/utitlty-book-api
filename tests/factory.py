@@ -3,7 +3,18 @@ from decimal import Decimal
 
 import factory
 
-from src.apps.readings.models import GasReading
+from src.apps.readings.models import ElectReading, GasReading
+
+
+class ElectReadingFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = ElectReading
+        django_get_or_create = ("reading_date",)
+
+    reading_value = factory.Sequence(lambda n: 500 + n * 30)
+    reading_date = factory.Sequence(lambda n: date(2024, 1, 1) + timedelta(days=30 * n))
+    reading_qty = factory.Sequence(lambda n: 100 + n * 20)
+    unit_price = factory.LazyFunction(lambda: Decimal("4.32"))
 
 
 class GasReadingFactory(factory.django.DjangoModelFactory):
