@@ -12,17 +12,17 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='electreading',
-            name='adj_costs',
-            field=models.DecimalField(decimal_places=2, default=0, help_text='Сумма корректировки (положительная — доплата, отрицательная — переплата)', max_digits=10, verbose_name='Корректировка суммы (UAH)'),
+            name='adj_unit_sum',
+            field=models.DecimalField(decimal_places=2, default=0, help_text='Корр. суммы', max_digits=10, verbose_name='Корр. суммы'),
         ),
         migrations.AddField(
             model_name='gasreading',
-            name='adj_costs',
-            field=models.DecimalField(decimal_places=2, default=0, help_text='Сумма корректировки (положительная — доплата, отрицательная — переплата)', max_digits=10, verbose_name='Корректировка суммы (UAH)'),
+            name='adj_unit_sum',
+            field=models.DecimalField(decimal_places=2, default=0, help_text='Корр. суммы', max_digits=10, verbose_name='Корр. суммы'),
         ),
         migrations.AddField(
             model_name='gasreading',
-            name='adj_trans_cost',
+            name='adj_trans_sum',
             field=models.DecimalField(decimal_places=2, default=0, help_text='Сумма корректировки транспортировки (положительная — доплата, отрицательная — переплата)', max_digits=10, verbose_name='Корректировка транспортировки (UAH)'),
         ),
     ]
