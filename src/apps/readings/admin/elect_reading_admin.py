@@ -13,8 +13,8 @@ class ElectReadingAdmin(BaseReadingAdmin):
         "reading_value_display",
         "reading_qty_display",
         "unit_price_display",
-        "elect_sum_display",
-        "adj_costs_display",
+        "total_elect_reading_sum_display",
+        "adj_unit_sum_display",
     ]
 
     fieldsets = (
@@ -33,7 +33,7 @@ class ElectReadingAdmin(BaseReadingAdmin):
             {
                 "fields": [
                     "reading_qty",
-                    "adj_costs",
+                    "adj_unit_sum",
                 ],
                 "classes": ["collapse"],
             },
@@ -46,7 +46,7 @@ class ElectReadingAdmin(BaseReadingAdmin):
 
     @admin.display(description="Потребление")
     def reading_qty_display(self, obj):
-        qty = obj.reading_qty if obj.reading_qty is not None else obj.computed_qty
+        qty = obj.reading_qty if obj.reading_qty is not None else obj.elect_reading_qty
         return f"{qty} кВт" if qty is not None else "—"
 
     @admin.display(description="Цена")
@@ -54,12 +54,12 @@ class ElectReadingAdmin(BaseReadingAdmin):
         return f"{obj.unit_price} ₴"
 
     @admin.display(description="Сумма")
-    def elect_sum_display(self, obj):
-        return f"{obj.elect_sum} ₴"
+    def total_elect_reading_sum_display(self, obj):
+        return f"{obj.total_elect_reading_sum} ₴"
 
     @admin.display(description="Корр. суммы")
-    def adj_costs_display(self, obj):
-        return self._colored_value_display(obj.adj_costs, "₴")
+    def adj_unit_sum_display(self, obj):
+        return self._colored_value_display(obj.adj_unit_sum, "₴")
 
     def get_queryset(self, request):
-        return ElectReading.objects.with_elect_sum()
+        return ElectReading.objects.with_elect_reading_sum()
