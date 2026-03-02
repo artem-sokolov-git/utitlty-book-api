@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
                 ('reading_date', models.DateField(help_text='Дата снятия показания (по умолчанию текущая дата)', unique=True, verbose_name='Дата')),
                 ('unit_price', models.DecimalField(decimal_places=2, help_text='Цена за единицу (по умолчанию предыдущее значение)', max_digits=10, verbose_name='Цена (UAH)')),
                 ('reading_value', models.PositiveIntegerField(help_text='Текущее показание на дату снятия', verbose_name='Показание счетчика (кВт)')),
-                ('reading_qty', models.PositiveIntegerField(help_text='Количество потребленного электричества', verbose_name='Потребление электричества (кВт)')),
+                ('reading_qty', models.PositiveIntegerField(help_text='Количество потребленного электричества', verbose_name='Потребление электричества (кВт)', null=True, blank=True)),
             ],
             options={
                 'verbose_name': 'показание электричества',

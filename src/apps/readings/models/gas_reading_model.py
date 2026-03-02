@@ -24,6 +24,13 @@ class GasReading(BaseReadingModel):
         max_digits=10,
         decimal_places=2,
     )
+    adj_trans_cost = models.DecimalField(
+        verbose_name="Корректировка транспортировки (UAH)",
+        help_text="Сумма корректировки транспортировки (положительная — доплата, отрицательная — переплата)",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
 
     def __str__(self):
         month = date_format(self.reading_date, "F Y")

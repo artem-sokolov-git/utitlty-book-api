@@ -16,11 +16,13 @@ class ElectReading(BaseReadingModel):
     reading_qty = models.PositiveIntegerField(
         verbose_name="Потребление электричества (кВт)",
         help_text="Количество потребленного электричества",
+        null=True,
+        blank=True,
     )
 
     def __str__(self):
         month = date_format(self.reading_date, "F Y")
-        return f"{month} · {self.reading_value} · {self.reading_qty}"
+        return f"{month} · {self.reading_value} кВт"
 
     class Meta:
         verbose_name = "показание электричества"

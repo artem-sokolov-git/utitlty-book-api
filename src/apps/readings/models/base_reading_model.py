@@ -15,6 +15,13 @@ class BaseReadingModel(TimeBaseModel):
         max_digits=10,
         decimal_places=2,
     )
+    adj_costs = models.DecimalField(
+        verbose_name="Корректировка суммы (UAH)",
+        help_text="Сумма корректировки (положительная — доплата, отрицательная — переплата)",
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+    )
 
     class Meta:
         abstract = True
