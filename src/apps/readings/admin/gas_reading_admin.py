@@ -1,37 +1,47 @@
 from django.contrib import admin
-from django.utils import timezone
-from django.utils.html import format_html
 
+from src.apps.readings.admin.base_reading_admin import BaseReadingAdmin
 from src.apps.readings.models import GasReading
 
 
 @admin.register(GasReading)
-class GasReadingAdmin(admin.ModelAdmin):
+class GasReadingAdmin(BaseReadingAdmin):
+    last_value_fields = ["unit_price", "trans_cost"]
+
     list_display = [
         "reading_date",
         "reading_value_display",
         "gas_dec_reading_display",
         "reading_qty_display",
         "gas_dec_diff_display",
-        "gas_dec_sum_display",
         "unit_price_display",
+        "gas_dec_sum_display",
+        "adj_costs_display",
         "trans_cost_display",
+        "adj_trans_cost_display",
     ]
-    ordering = ["-reading_date"]
 
     fieldsets = (
         (
             "Газ",
             {
-                "fields": (
-                    [
-                        "reading_date",
-                        "reading_value",
-                        "reading_qty",
-                        "unit_price",
-                        "trans_cost",
-                    ]
-                ),
+                "fields": [
+                    "reading_date",
+                    "reading_value",
+                    "reading_qty",
+                    "unit_price",
+                    "trans_cost",
+                ],
+            },
+        ),
+        (
+            "Корректировка",
+            {
+                "fields": [
+                    "adj_trans_cost",
+                    "adj_costs",
+                ],
+                "classes": ["collapse"],
             },
         ),
     )
@@ -50,31 +60,27 @@ class GasReadingAdmin(admin.ModelAdmin):
 
     @admin.display(description="Долг/профицит")
     def gas_dec_diff_display(self, obj):
-        diff = obj.gas_dec_diff
-        color = "Crimson" if diff > 0 else "MediumSeaGreen" if diff == 0 else "CadetBlue"
-        sign = "+" if diff > 0 else ""
-        return format_html('<span style="color: {}; font-weight: 600">{}{} м³</span>', color, sign, diff)
-
-    @admin.display(description="Сумма (Д)")
-    def gas_dec_sum_display(self, obj):
-        return f"{obj.gas_dec_sum} ₴"
+        return self._colored_value_display(obj.gas_dec_diff, "м³")
 
     @admin.display(description="Цена (Д)")
     def unit_price_display(self, obj):
         return f"{obj.unit_price} ₴"
 
+    @admin.display(description="Сумма (Д)")
+    def gas_dec_sum_display(self, obj):
+        return f"{obj.gas_dec_sum} ₴"
+
+    @admin.display(description="Корр. суммы")
+    def adj_costs_display(self, obj):
+        return self._colored_value_display(obj.adj_costs, "₴")
+
     @admin.display(description="Транспортировка")
     def trans_cost_display(self, obj):
-        return f"{obj.trans_cost} ₴"
+        return f"{obj.total_trans_cost} ₴"
 
-    def get_changeform_initial_data(self, request):
-        initial = super().get_changeform_initial_data(request)
-        initial["reading_date"] = timezone.now().date().isoformat()
-        last = GasReading.objects.order_by("-reading_date").first()
-        if last:
-            initial["unit_price"] = last.unit_price
-            initial["trans_cost"] = last.trans_cost
-        return initial
+    @admin.display(description="Корр. транспортировки")
+    def adj_trans_cost_display(self, obj):
+        return self._colored_value_display(obj.adj_trans_cost, "₴")
 
     def get_queryset(self, request):
-        return GasReading.objects.with_readings().with_diff().with_costs()
+        return GasReading.objects.with_dec_reading().with_dec_diff().with_dec_sum().with_trans_cost()

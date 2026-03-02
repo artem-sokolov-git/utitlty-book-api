@@ -1,41 +1,53 @@
 from django.contrib import admin
-from django.utils import timezone
 
+from src.apps.readings.admin.base_reading_admin import BaseReadingAdmin
 from src.apps.readings.models import ElectReading
 
 
 @admin.register(ElectReading)
-class ElectReadingAdmin(admin.ModelAdmin):
+class ElectReadingAdmin(BaseReadingAdmin):
+    last_value_fields = ["unit_price"]
+
     list_display = [
         "reading_date",
         "reading_value_display",
         "reading_qty_display",
-        "elect_sum_display",
         "unit_price_display",
+        "elect_sum_display",
+        "adj_costs_display",
     ]
-    ordering = ["-reading_date"]
 
     fieldsets = (
         (
-            "Электричество",
+            "Электроэнергия",
             {
                 "fields": [
                     "reading_date",
                     "reading_value",
-                    "reading_qty",
                     "unit_price",
                 ],
             },
         ),
+        (
+            "Корректировка",
+            {
+                "fields": [
+                    "reading_qty",
+                    "adj_costs",
+                ],
+                "classes": ["collapse"],
+            },
+        ),
     )
 
-    @admin.display(description="Показание (кВт)")
+    @admin.display(description="Показание")
     def reading_value_display(self, obj):
         return f"{obj.reading_value} кВт"
 
-    @admin.display(description="Потребление (кВт)")
+    @admin.display(description="Потребление")
     def reading_qty_display(self, obj):
-        return f"{obj.reading_qty} кВт"
+        qty = obj.reading_qty if obj.reading_qty is not None else obj.computed_qty
+        return f"{qty} кВт" if qty is not None else "—"
 
     @admin.display(description="Цена")
     def unit_price_display(self, obj):
@@ -45,13 +57,9 @@ class ElectReadingAdmin(admin.ModelAdmin):
     def elect_sum_display(self, obj):
         return f"{obj.elect_sum} ₴"
 
-    def get_changeform_initial_data(self, request):
-        initial = super().get_changeform_initial_data(request)
-        initial["reading_date"] = timezone.now().date().isoformat()
-        last = ElectReading.objects.order_by("-reading_date").first()
-        if last:
-            initial["unit_price"] = last.unit_price
-        return initial
+    @admin.display(description="Корр. суммы")
+    def adj_costs_display(self, obj):
+        return self._colored_value_display(obj.adj_costs, "₴")
 
     def get_queryset(self, request):
-        return ElectReading.objects.with_costs()
+        return ElectReading.objects.with_elect_sum()
