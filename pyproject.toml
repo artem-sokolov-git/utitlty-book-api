@@ -1,7 +1,7 @@
 [project]
-name = "utitlty-book"
+name = "utitlty-book-api"
 version = "0.1.0"
-description = "Service for accounting and control of utility expenses."
+description = "REST API сервис для учёта и контроля коммунальных расходов (электроэнергия и газ)."
 readme = "README.md"
 requires-python = ">=3.12,<=3.13"
 dependencies = [

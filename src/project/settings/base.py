@@ -1,5 +1,5 @@
 """
-Django settings for utitlty-book project.
+Django settings for utitlty-book-api project.
 """
 
 from pathlib import Path
@@ -120,3 +120,6 @@ STATIC_URL = "static/"
 # App settings
 
 GAS_DEC_INITIAL_READING = env.int("GAS_DEC_INITIAL_READING")
+
+ADMIN_USER = env("ADMIN_USER")
+ADMIN_PASSWORD = env("ADMIN_PASSWORD")

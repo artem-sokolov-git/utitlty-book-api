@@ -7,12 +7,12 @@ CYAN=\033[36m
 RESET=\033[0m
 
 COMPOSE_FILES=--env-file .env -f docker/storages.yaml -f docker/apps.yaml
-WEB_EXEC=docker compose $(COMPOSE_FILES) exec -it web
+EXEC=docker compose $(COMPOSE_FILES) exec -it api
 
 # DOCKER
 run: ## Start container in detached mode (rebuild image)
 	@echo "$(CYAN)>>> Starting containers...$(RESET)"
-	@docker compose $(COMPOSE_FILES) up -d pg web --build
+	@docker compose $(COMPOSE_FILES) up -d pg api --build
 
 down: ## Stop and remove container
 	@echo "$(YELLOW)>>> Stopping containers...$(RESET)"
@@ -44,13 +44,13 @@ migrations: ## Make database migrations
 	@uv run python -W ignore::RuntimeWarning manage.py makemigrations
 
 migrate: ## Apply database migrations
-	@$(WEB_EXEC) python manage.py migrate
+	@$(EXEC) python manage.py migrate
 
 superuser: ## Create superuser
-	@$(WEB_EXEC) python manage.py createsuperuser
+	@$(EXEC) python manage.py create_superuser
 
-shell: ## Create superuser
-	@$(WEB_EXEC) python manage.py shell
+shell: ## Open shell
+	@$(EXEC) python manage.py shell
 
 ## POSTGRES
 import-sql: ## Import SQL file into pg (usage: make import-sql file=data/gas_insert.sql)

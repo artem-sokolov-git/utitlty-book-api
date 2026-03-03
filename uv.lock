@@ -470,7 +470,7 @@ wheels = [
 ]
 
 [[package]]
-name = "utitlty-book"
+name = "utitlty-book-api"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

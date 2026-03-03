@@ -1,11 +1,11 @@
 name: utility-book
 
 services:
-  web:
+  api:
     build:
       context: ..
       dockerfile: Dockerfile.dev
-    container_name: web
+    container_name: api
     env_file:
       - ../.env
     ports:
@@ -18,4 +18,4 @@ services:
 
 networks:
   default:
-    name: utility-book-network
+    name: utility-book-api-network

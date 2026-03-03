@@ -27,4 +27,4 @@ volumes:
 
 networks:
   default:
-    name: utility-book-network
+    name: utility-book-api-network
